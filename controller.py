@@ -8,3 +8,9 @@ class Controller:
 
     def text_to_braille(self, text):
         pass
+
+    def load_braille_files(self, path_to_braille_file):
+        pass
+
+    def save_braille_file(self):
+        pass
