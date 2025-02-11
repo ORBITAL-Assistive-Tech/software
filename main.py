@@ -1,6 +1,5 @@
 from view import View
 from controller import Controller
-from model import Person
 
 
 def main():
