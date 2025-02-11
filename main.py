@@ -4,7 +4,9 @@ from model import Person
 
 
 def main():
-    view = View()
+    control = Controller()
+    # control.pdf_to_text("hello")
+    # control.text_to_braille("hello")
 
 
 if __name__ == "__main__":
