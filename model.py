@@ -1,10 +1,32 @@
-class Person:
+class BrailleFile:
 
-    def __init__(self):
-        self.name = "Andrew"
+    def __init__(self, text, braille, file_path):
+        self.file_path = file_path
+        self.text = text
+        self.braille = braille
+        self.id = 0
+        pass
 
-    def change_name(self):
-        self.name = self.name + "a"
+    def get_braille(self):
+        return self.braille
 
-    def get_name(self):
-        return self.name
+    def get_text(self):
+        return self.text
+
+
+class Reader:
+
+    def __init__(self, documents=None):
+        self.documents = []
+
+    def add_document(self, document: BrailleFile):
+        self.documents.append(document)
+
+    def remove_document(self, document: BrailleFile):
+        pass
+
+    def get_document(self):
+        pass
+
+    def get_all_documents(self):
+        return self.documents

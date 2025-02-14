@@ -1,10 +1,12 @@
 from view import View
 from controller import Controller
-from model import Person
+from model import Reader
 
 
 def main():
-    view = View()
+    reader = Reader()
+    control = Controller(reader)
+    control.load_braille_file("documents/book1.txt")
 
 
 if __name__ == "__main__":
