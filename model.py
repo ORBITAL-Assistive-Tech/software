@@ -1,10 +1,13 @@
+import uuid
+
+
 class BrailleFile:
 
     def __init__(self, text, braille, file_path):
         self.file_path = file_path
         self.text = text
         self.braille = braille
-        self.id = 0
+        self.id = uuid.uuid4()
         pass
 
     def get_braille(self):
