@@ -1,9 +1,4 @@
 import json
-import sys
-
-sys.path.append("/home/koroko/Workspace/pybrl")
-
-import pybrl as brl
 from model import Braille_file, Reader
 
 
@@ -19,7 +14,7 @@ class Controller:
         pass
 
     def text_to_braille(self, text):
-        return brl.translate(text)
+        pass
 
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
