@@ -1,6 +1,6 @@
 from view import View
 from controller import Controller
-from model import Person
+from model import Reader
 
 
 def main():
