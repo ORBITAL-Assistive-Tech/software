@@ -1,5 +1,6 @@
 import json
 from model import BrailleFile, Reader
+import pybrl as brl
 
 
 class Controller:
@@ -15,6 +16,13 @@ class Controller:
 
     def text_to_braille(self, text):
         pass
+
+    def upload_text_file(self, path):
+        with open(path, "r") as f:
+            text = " ".join(f.readlines())
+            braille = brl.translate(text)
+            braille_file = BrailleFile(text, braille, path)
+            self.reader.add_document(braille_file)
 
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
