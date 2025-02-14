@@ -1,5 +1,5 @@
 import json
-from model import Braille_file, Reader
+from model import BrailleFile, Reader
 
 
 class Controller:
@@ -19,7 +19,7 @@ class Controller:
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
             data = json.load(f)
-            braille_file = Braille_file(
+            braille_file = BrailleFile(
                 data["text"], data["braille"], path_to_braille_file
             )
             self.reader.add_document(braille_file)

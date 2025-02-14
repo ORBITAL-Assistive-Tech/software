@@ -1,4 +1,4 @@
-class Braille_file:
+class BrailleFile:
 
     def __init__(self, text, braille, file_path):
         self.file_path = file_path
@@ -19,10 +19,10 @@ class Reader:
     def __init__(self, documents=None):
         self.documents = []
 
-    def add_document(self, document: Braille_file):
+    def add_document(self, document: BrailleFile):
         self.documents.append(document)
 
-    def remove_document(self, document: Braille_file):
+    def remove_document(self, document: BrailleFile):
         pass
 
     def get_document(self):
