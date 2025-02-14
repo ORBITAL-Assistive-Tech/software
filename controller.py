@@ -19,7 +19,7 @@ class Controller:
 
     def upload_text_file(self, path):
         with open(path, "r") as f:
-            text = "\n".join(f.readlines())
+            text = "".join(f.readlines())
             braille = brl.translate(text)
             braille_file = BrailleFile(text, braille, path)
             self.reader.add_document(braille_file)
