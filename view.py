@@ -3,11 +3,17 @@ from controller import Controller
 from model import Reader
 import json
 
-# Load braille input from file
-with open("documents/book1.txt", "r") as f:
-    data = json.load(f)
+reader = Reader()
 
-braille_input = data.get("braille")
+# Load books
+book1 = reader.load_braille_file("documents/book1.txt")
+book2 = reader.load_braille_file("documents/book2.txt")
+reader.add_document(book1)
+reader.add_document(book2)
+
+# Load the braille in the book we want to display
+braille_input = reader.get_document(book2.file_path)
+
 
 # Merge words into a single list with an empty cell between them
 empty_cell = "000000"
