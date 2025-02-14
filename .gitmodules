@@ -1,0 +1,3 @@
+[submodule "pybrl"]
+	path = pybrl
+	url = https://github.com/ant0nisk/pybrl
