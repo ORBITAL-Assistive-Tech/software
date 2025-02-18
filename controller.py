@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("../pybrl")
+
 import json
 from model import BrailleFile, Reader
 import pybrl as brl
@@ -23,6 +27,7 @@ class Controller:
             braille = brl.translate(text)
             braille_file = BrailleFile(text, braille, path)
             self.reader.add_document(braille_file)
+            self.save_braille_file(text, braille)
 
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
@@ -34,5 +39,5 @@ class Controller:
 
     def save_braille_file(self, text, braille):
         data = {"text": text, "braille": braille}
-        with open("documents/book2.txt", "w") as f:
+        with open("documents/test.txt", "w") as f:
             json.dump(data, f, ensure_ascii=False)
