@@ -35,9 +35,8 @@ class Reader:
             if document.file_path == file_path:
                 return document.get_braille()
         return None
-    
-    @staticmethod
-    def load_braille_file(file_path):
+
+    def load_braille_file(self, file_path):
         with open(file_path, "r") as f:
             data = json.load(f)
         return Braille_file(text=data["text"], braille=data["braille"], file_path=file_path)
