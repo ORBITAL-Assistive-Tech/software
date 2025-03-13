@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from controller import Controller
 from model import Reader
 import json
@@ -13,7 +14,6 @@ reader.add_document(book2)
 
 # Load the braille in the book we want to display
 braille_input = reader.get_document(book2.file_path)
-
 
 # Merge words into a single list with an empty cell between them
 empty_cell = "000000"
@@ -53,43 +53,94 @@ for page in merged_braille_input_wpages:
 print("Total pages:", len(merged_braille_input_wpages))
 
 
-# === GUI with page navigation ===
+# ======== GUI with page navigation ========
 
 
-class View:
+class Menu(tk.Tk):
     def __init__(self):
+        super().__init__()
+        self.geometry("1200x900")
+        self.title("Braille Reader Menu")
+
+        ttk.Button(self, text="Book 1", command=self.open_chapter).pack(expand=True)
+
+    def open_chapter(self):
+        self.chapter = Chapter(self)  # Open Braille Reader
+
+
+class Chapter(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+        self.geometry("1200x900")
+        self.title("Braille Reader")
+
+        ttk.Button(self, text="Chapter 1", command=self.open_window).pack(expand=True)
+        ttk.Button(self, text="Back to Main Menu", command=self.return_to_main).pack(
+            pady=10
+        )
+
+    def open_window(self):
+        Content(self).grab_set()
+
         person_a = Reader()
         control = Controller(person_a)
 
-        self.root = tk.Tk()
-        self.root.title("Braille Reader")
+    def return_to_main(self):
+        self.destroy()
+        self.parent.deiconify()
 
-        # Set a larger window size
-        self.root.geometry("1200x900")
 
-        # Track the current page index
-        self.page_index = 0
+class Content(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.geometry("1200x950")
+        self.title("Content Display")
 
-        # Create Braille display canvas with larger dimensions
         self.dot_size = 10
         self.spacing = 20
         self.row_spacing = 80  # Increased row spacing between braille rows
-        self.canvas = tk.Canvas(self.root, width=1000, height=800, bg="white")
-        self.canvas.grid(row=0, column=0, columnspan=10)
+
+        # Initialize the canvas for Braille display
+        self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
+        self.canvas.pack(pady=10)
+
+        # Track the current page index
+        self.page_index = 0
 
         # Draw the initial page
         self.update_canvas()
 
         # Create Forward button to advance a page
-        self.forward_btn = tk.Button(self.root, text="Forward", command=self.next_page)
-        self.forward_btn.grid(row=1, column=4, pady=10)
+        self.forward_btn = tk.Button(self, text="Forward", command=self.next_page)
+        self.forward_btn.pack(side="right", padx=10)
 
-        # Optional: Create Back button to go to the previous page
-        self.back_btn = tk.Button(self.root, text="Back", command=self.prev_page)
-        self.back_btn.grid(row=1, column=3, pady=10)
+        # Create Back button to go to the previous page
+        self.back_btn = tk.Button(self, text="Back", command=self.prev_page)
+        self.back_btn.pack(side="left", padx=10)
 
-        # Start the GUI event loop
-        self.root.mainloop()
+        # Close Button for this window
+        self.close_btn = ttk.Button(
+            self, text="Back to Book Chapters", command=self.destroy
+        )
+        self.close_btn.pack(side="bottom", pady=5)
+
+        # Page navigation
+        label = tk.Label(self, text="go to page:", font=(24))
+        label.pack()
+        entry = tk.Entry(self, width=6)
+        entry.pack()
+
+        self.go_to_page_btn = ttk.Button(
+            self,
+            text="Confirm",
+            command=lambda: self.go_to_page(int(entry.get())),
+        )
+        self.go_to_page_btn.pack()
+
+    def go_to_page(self, target_page):
+        self.draw_braille(merged_braille_input_wpages[target_page])
 
     def draw_braille(self, braille_grid):
         """Draws the braille dots on the canvas for the provided grid (a page)."""
@@ -139,4 +190,7 @@ class View:
 
 
 # Run the application
-View()
+
+if __name__ == "__main__":
+    view = Menu()
+    view.mainloop()
