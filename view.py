@@ -53,14 +53,50 @@ for page in merged_braille_input_wpages:
 print("Total pages:", len(merged_braille_input_wpages))
 
 
-# === GUI with page navigation ===
+# ======== GUI with page navigation ========
 
 
-class Window(tk.Toplevel):
+class Menu(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("1200x900")
+        self.title("Braille Reader Menu")
+
+        ttk.Button(self, text="Book 1", command=self.open_chapter).pack(expand=True)
+
+    def open_chapter(self):
+        self.chapter = Chapter(self)  # Open Braille Reader
+
+
+class Chapter(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
+
         self.geometry("1200x900")
         self.title("Braille Reader")
+
+        ttk.Button(self, text="Chapter 1", command=self.open_window).pack(expand=True)
+        ttk.Button(self, text="Back to Main Menu", command=self.return_to_main).pack(
+            pady=10
+        )
+
+    def open_window(self):
+        Content(self).grab_set()
+
+        person_a = Reader()
+        control = Controller(person_a)
+
+    def return_to_main(self):
+        self.destroy()
+        self.parent.deiconify()
+
+
+class Content(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.geometry("1200x950")
+        self.title("Content Display")
 
         self.dot_size = 10
         self.spacing = 20
@@ -85,8 +121,26 @@ class Window(tk.Toplevel):
         self.back_btn.pack(side="left", padx=10)
 
         # Close Button for this window
-        self.close_btn = ttk.Button(self, text="Menu", command=self.destroy)
-        self.close_btn.pack(side="bottom", expand=True)
+        self.close_btn = ttk.Button(
+            self, text="Back to Book Chapters", command=self.destroy
+        )
+        self.close_btn.pack(side="bottom", pady=5)
+
+        # Page navigation
+        label = tk.Label(self, text="go to page:", font=(24))
+        label.pack()
+        entry = tk.Entry(self, width=6)
+        entry.pack()
+
+        self.go_to_page_btn = ttk.Button(
+            self,
+            text="Confirm",
+            command=lambda: self.go_to_page(int(entry.get())),
+        )
+        self.go_to_page_btn.pack()
+
+    def go_to_page(self, target_page):
+        self.draw_braille(merged_braille_input_wpages[target_page])
 
     def draw_braille(self, braille_grid):
         """Draws the braille dots on the canvas for the provided grid (a page)."""
@@ -135,28 +189,8 @@ class Window(tk.Toplevel):
             print("Already at the first page.")
 
 
-class View(tk.Tk):
-    def __init__(self):
-        super().__init__()
-
-        self.geometry("1200x900")
-        self.title("Braille Reader")
-
-        # place a button on the root window
-        ttk.Button(self, text="Open Book", command=self.open_window).pack(expand=True)
-
-    def open_window(self):
-        window = Window(self)
-        window.grab_set()
-
-        person_a = Reader()
-        control = Controller(person_a)
-
-        self.title("Braille Reader")
-
-
 # Run the application
 
 if __name__ == "__main__":
-    view = View()
+    view = Menu()
     view.mainloop()
