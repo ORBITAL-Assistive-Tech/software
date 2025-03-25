@@ -1,17 +1,19 @@
-from PyPDF2 import PdfReader
+import docx2txt
 
 
 class Controller:
 
-    def __init__(self, person):
-        self.person = person
+    def __init__(self):
         pass
 
-    def print_hello_world(self):
-        self.person.change_name()
-        print(self.person.get_name())
+    def docx_to_text(docx_path, txt_path):
+        try:
+            text = docx2txt.process(docx_path)
+            with open(txt_path, 'w', encoding='utf-8') as text_file:
+            text_file.write(text)
+            print(f"Successfully converted '{docx_path}' to '{txt_path}'")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
-    # PDF to Text reader
-    reader = PdfReader("example.pdf")
-    page = reader.pages[0]
-    print(page.extract_text())
+    def text_to_braille(self, text):
+        pass
