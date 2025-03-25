@@ -7,6 +7,7 @@ import json
 reader = Reader()
 controller = Controller(reader)
 
+
 def load_input(book, chapter):
     # Load the braille in the book we want to display
     braille_input = reader.get_content(book, chapter)
@@ -42,16 +43,22 @@ def load_input(book, chapter):
     print("Total pages:", len(merged_braille_input_wpages))
     return merged_braille_input_wpages
 
+
 class Menu(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("1200x900")
         self.title("Braille Reader Menu")
-        ttk.Button(self, text="Book 1", command=self.open_chapter_page).pack(expand=True)
-        ttk.Button(self, text="Book 2", command=self.open_chapter_page).pack(expand=True)
+        ttk.Button(self, text="Book 1", command=self.open_chapter_page).pack(
+            expand=True
+        )
+        ttk.Button(self, text="Book 2", command=self.open_chapter_page).pack(
+            expand=True
+        )
 
     def open_chapter_page(self):
         self.chapter = Chapter(self)
+
 
 class Chapter(tk.Toplevel):
     def __init__(self, parent):
@@ -72,6 +79,7 @@ class Chapter(tk.Toplevel):
     def return_to_main(self):
         self.destroy()
         self.parent.deiconify()
+
 
 class Content(tk.Toplevel):
     def __init__(self, parent):
@@ -154,6 +162,7 @@ class Content(tk.Toplevel):
         page_content = controller.prev_page(merged_braille_input_wpages)
         if page_content:
             self.draw_braille(page_content)
+
 
 if __name__ == "__main__":
     view = Menu()

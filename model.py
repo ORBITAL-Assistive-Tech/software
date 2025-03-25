@@ -30,7 +30,7 @@ class Reader:
         pass
 
     # Load braille from a book
-    def get_document(self, file_path):
+    def get_braille_in_document(self, file_path):
         for document in self.documents:
             if document.file_path == file_path:
                 return document.get_braille()
@@ -46,3 +46,17 @@ class Reader:
     # Load the list of books on menu
     def get_all_documents(self):
         return self.documents
+
+    # Load braille content
+    def get_content(self, book, chapter="chapter1"):
+        path = f"documents/{book}/{chapter}.txt"
+        chapter_content = self.load_braille_file(path)
+        self.add_document(chapter_content)
+        braille_input = self.get_braille_in_document(chapter_content.file_path)
+        return braille_input
+    
+    def get_book_nums(self):
+        pass
+
+    def get_chapter_nums(self):
+        pass

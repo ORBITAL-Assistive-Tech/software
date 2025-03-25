@@ -17,19 +17,6 @@ class Controller:
     def text_to_braille(self, text):
         pass
 
-    def load_braille_file(self, path_to_braille_file):
-        with open(path_to_braille_file, "r+") as f:
-            data = json.load(f)
-            braille_file = Braille_file(
-                data["text"], data["braille"], path_to_braille_file
-            )
-            self.reader.add_document(braille_file)
-
-    def save_braille_file(self, text, braille):
-        data = {"text": text, "braille": braille}
-        with open("documents/book2.txt", "w") as f:
-            json.dump(data, f, ensure_ascii=False)
-
     def go_to_page(self, target_page, braille_pages):
         if 0 <= target_page < len(braille_pages):
             self.page_index = target_page
