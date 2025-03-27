@@ -1,10 +1,6 @@
-import sys
-
-sys.path.append("../pybrl")
-
 import json
 from model import BrailleFile, Reader
-import pybrl as brl
+import docx2txt
 
 
 class Controller:
@@ -14,9 +10,6 @@ class Controller:
 
     def __init__(self, reader):
         self.reader = reader
-
-    def pdf_to_text(self, path_to_pdf):
-        pass
 
     def text_to_braille(self, text):
         pass
