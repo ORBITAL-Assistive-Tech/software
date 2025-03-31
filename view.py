@@ -7,6 +7,7 @@ import json
 reader = Reader()
 controller = Controller(reader)
 
+
 def load_input(book, chapter):
     # Load the braille in the book we want to display
     braille_input = reader.get_content(book, chapter)
@@ -42,16 +43,22 @@ def load_input(book, chapter):
     print("Total pages:", len(merged_braille_input_wpages))
     return merged_braille_input_wpages
 
+
 class Menu(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("1200x900")
         self.title("Braille Reader Menu")
-        ttk.Button(self, text="Book 1", command=self.open_chapter_page).pack(expand=True)
-        ttk.Button(self, text="Book 2", command=self.open_chapter_page).pack(expand=True)
+        ttk.Button(self, text="Book 1", command=self.open_chapter_page).pack(
+            expand=True
+        )
+        ttk.Button(self, text="Book 2", command=self.open_chapter_page).pack(
+            expand=True
+        )
 
     def open_chapter_page(self):
         self.chapter = Chapter(self)
+
 
 class Chapter(tk.Toplevel):
     def __init__(self, parent):
@@ -73,6 +80,7 @@ class Chapter(tk.Toplevel):
         self.destroy()
         self.parent.deiconify()
 
+
 class Content(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -86,12 +94,21 @@ class Content(tk.Toplevel):
         self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
         self.canvas.pack(pady=10)
 
+        self.merged_braille_input_wpages = load_input("book1", "chapter1")
         self.update_canvas("book1", "chapter1")
 
-        self.forward_btn = tk.Button(self, text="Forward", command=self.next_page)
+        self.forward_btn = tk.Button(
+            self,
+            text="Forward",
+            command=lambda: self.next_page(self.merged_braille_input_wpages),
+        )
         self.forward_btn.pack(side="right", padx=10)
 
-        self.back_btn = tk.Button(self, text="Back", command=self.prev_page)
+        self.back_btn = tk.Button(
+            self,
+            text="Back",
+            command=lambda: self.prev_page(self.merged_braille_input_wpages),
+        )
         self.back_btn.pack(side="left", padx=10)
 
         self.close_btn = ttk.Button(
@@ -154,6 +171,7 @@ class Content(tk.Toplevel):
         page_content = controller.prev_page(merged_braille_input_wpages)
         if page_content:
             self.draw_braille(page_content)
+
 
 if __name__ == "__main__":
     view = Menu()
