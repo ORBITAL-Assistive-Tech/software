@@ -36,11 +36,7 @@ def docx_to_txt(input_path, output_path=None):
         paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
         full_text = "\n".join(paragraphs)
 
-        # Write TXT file
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(full_text)
-
-        return output_path
+        return full_text
 
     except Exception as e:
         raise ValueError(f"Conversion failed: {str(e)}")

@@ -21,8 +21,12 @@ def main():
             control.load_braille_file(f"documents/{f}")
             continue
         warnings.warn(f"{f} did not have a recognized file extension")
-    for d in control.reader.documents:
-        print(d.id)
+    control.docx_to_braille(
+        "/home/koroko/Workspace/orbital_software/test_materials/superman_and_me.docx"
+    )
+    control.brf_to_braille(
+        "/home/koroko/Workspace/orbital_software/test_materials/The_Giver.brf"
+    )
 
 
 if __name__ == "__main__":

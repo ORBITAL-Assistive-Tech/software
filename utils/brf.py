@@ -61,6 +61,8 @@ conversion = {
     "(": "111011",
     "]": "110111",
     ")": "011111",
+    "=": "111111",
+    "\\": "110011",
 }
 
 
@@ -77,4 +79,4 @@ def brf_to_binary(filename):
             continue
         line_braille.append(conversion[i])
 
-    return braille
+    return (brf_text, braille)

@@ -1,6 +1,15 @@
 import json
 from model import BrailleFile, Reader
-import docx2txt
+import utils.docx as docs
+import utils.brf as brf
+
+import sys
+
+sys.path.append("/home/koroko/Workspace/pybrl")
+
+import pybrl as brl
+
+# /home/koroko/Workspace/pybrl
 
 
 class Controller:
@@ -12,7 +21,7 @@ class Controller:
         self.reader = reader
 
     def text_to_braille(self, text):
-        pass
+        return brl.translate(text)
 
     def upload_text_file(self, path):
         with open(path, "r") as f:
@@ -32,5 +41,18 @@ class Controller:
 
     def save_braille_file(self, text, braille):
         data = {"text": text, "braille": braille}
-        with open("documents/test.txt", "w") as f:
+        with open(
+            f"documents/book{len(self.reader.get_all_documents())+1}.json", "w"
+        ) as f:
             json.dump(data, f, ensure_ascii=False)
+
+    def docx_to_braille(self, filepath):
+        text = docs.docx_to_txt(filepath)
+        braille = self.text_to_braille(text)
+        self.save_braille_file(text, braille)
+
+    def brf_to_braille(self, filepath):
+        data = brf.brf_to_binary(filepath)
+        text = data[0]
+        braille = data[1]
+        self.save_braille_file(text, braille)
