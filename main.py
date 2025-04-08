@@ -1,12 +1,11 @@
-from view import View
+from view import Menu, Chapter, Content
 from controller import Controller
 from model import Reader
 
 
 def main():
-    reader = Reader()
-    control = Controller(reader)
-    control.load_braille_file("documents/book1.txt")
+    view = Menu()
+    view.mainloop()
 
 
 if __name__ == "__main__":

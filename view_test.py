@@ -94,21 +94,12 @@ class Content(tk.Toplevel):
         self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
         self.canvas.pack(pady=10)
 
-        self.merged_braille_input_wpages = load_input("book1", "chapter1")
         self.update_canvas("book1", "chapter1")
 
-        self.forward_btn = tk.Button(
-            self,
-            text="Forward",
-            command=lambda: self.next_page(self.merged_braille_input_wpages),
-        )
+        self.forward_btn = tk.Button(self, text="Forward", command=self.next_page)
         self.forward_btn.pack(side="right", padx=10)
 
-        self.back_btn = tk.Button(
-            self,
-            text="Back",
-            command=lambda: self.prev_page(self.merged_braille_input_wpages),
-        )
+        self.back_btn = tk.Button(self, text="Back", command=self.prev_page)
         self.back_btn.pack(side="left", padx=10)
 
         self.close_btn = ttk.Button(
