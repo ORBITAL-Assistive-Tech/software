@@ -1,9 +1,10 @@
 import json
+import os
+import sys
 from model import Braille_file, Reader
 import utils.docx as docs
 import utils.brf as brf
-
-import sys
+import warnings
 
 sys.path.append("/home/koroko/Workspace/pybrl")
 
@@ -20,6 +21,20 @@ class Controller:
     def __init__(self, reader):
         self.reader = reader
         self.page_index = 0
+
+        for f in os.listdir("documents"):
+            if not os.path.isfile(f"documents/{f}"):
+                continue
+            _, extension = os.path.splitext(f)
+            if extension == ".pdf":
+                pass
+            if extension == ".txt":
+                self.upload_text_file(f"documents/{f}")
+                continue
+            if extension == ".json":
+                self.load_braille_file(f"documents/{f}")
+                continue
+            warnings.warn(f"{f} did not have a recognized file extension")
 
     def text_to_braille(self, text):
         return brl.translate(text)
