@@ -1,4 +1,5 @@
 import json
+import uuid
 
 
 class Braille_file:
@@ -7,8 +8,7 @@ class Braille_file:
         self.file_path = file_path
         self.text = text
         self.braille = braille
-        self.id = 0
-        pass
+        self.id = uuid.uuid4()
 
     def get_braille(self):
         return self.braille

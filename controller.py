@@ -1,5 +1,15 @@
 import json
 from model import Braille_file, Reader
+import utils.docx as docs
+import utils.brf as brf
+
+import sys
+
+sys.path.append("/home/koroko/Workspace/pybrl")
+
+import pybrl as brl
+
+# /home/koroko/Workspace/pybrl
 
 
 class Controller:
@@ -11,11 +21,16 @@ class Controller:
         self.reader = reader
         self.page_index = 0
 
-    def pdf_to_text(self, path_to_pdf):
-        pass
-
     def text_to_braille(self, text):
-        pass
+        return brl.translate(text)
+
+    def upload_text_file(self, path):
+        with open(path, "r") as f:
+            text = "".join(f.readlines())
+            braille = brl.translate(text)
+            braille_file = Braille_file(text, braille, path)
+            self.reader.add_document(braille_file)
+            self.save_braille_file(text, braille)
 
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
@@ -27,7 +42,9 @@ class Controller:
 
     def save_braille_file(self, text, braille):
         data = {"text": text, "braille": braille}
-        with open("documents/book2.txt", "w") as f:
+        with open(
+            f"documents/book{len(self.reader.get_all_documents())+1}.json", "w"
+        ) as f:
             json.dump(data, f, ensure_ascii=False)
 
     def go_to_page(self, target_page, braille_pages):
@@ -53,3 +70,14 @@ class Controller:
         else:
             print("Already at the first page.")
             return None
+
+    def docx_to_braille(self, filepath):
+        text = docs.docx_to_txt(filepath)
+        braille = self.text_to_braille(text)
+        self.save_braille_file(text, braille)
+
+    def brf_to_braille(self, filepath):
+        data = brf.brf_to_binary(filepath)
+        text = data[0]
+        braille = data[1]
+        self.save_braille_file(text, braille)
