@@ -6,10 +6,6 @@ import utils.docx as docs
 import utils.brf as brf
 import warnings
 
-sys.path.append("/home/koroko/Workspace/pybrl")
-
-import pybrl as brl
-
 # /home/koroko/Workspace/pybrl
 
 
@@ -37,12 +33,14 @@ class Controller:
             warnings.warn(f"{f} did not have a recognized file extension")
 
     def text_to_braille(self, text):
-        return brl.translate(text)
+        # return brl.translate(text)
+        pass
 
     def upload_text_file(self, path):
         with open(path, "r") as f:
             text = "".join(f.readlines())
-            braille = brl.translate(text)
+            # braille = brl.translate(text)
+            braille = ""
             braille_file = Braille_file(text, braille, path)
             self.reader.add_document(braille_file)
             self.save_braille_file(text, braille)
