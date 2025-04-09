@@ -23,9 +23,6 @@ class Controller:
                 continue
             _, extension = os.path.splitext(f)
             if extension == ".pdf":
-                pass
-            if extension == ".txt":
-                self.upload_text_file(f"documents/{f}")
                 continue
             if extension == ".json":
                 self.load_braille_file(f"documents/{f}")
@@ -33,17 +30,7 @@ class Controller:
             warnings.warn(f"{f} did not have a recognized file extension")
 
     def text_to_braille(self, text):
-        # return brl.translate(text)
-        pass
-
-    def upload_text_file(self, path):
-        with open(path, "r") as f:
-            text = "".join(f.readlines())
-            # braille = brl.translate(text)
-            braille = ""
-            braille_file = Braille_file(text, braille, path)
-            self.reader.add_document(braille_file)
-            self.save_braille_file(text, braille)
+        return []
 
     def load_braille_file(self, path_to_braille_file):
         with open(path_to_braille_file, "r+") as f:
