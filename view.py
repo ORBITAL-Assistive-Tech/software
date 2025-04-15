@@ -49,25 +49,28 @@ class Menu(tk.Tk):
         super().__init__()
         self.geometry("1200x900")
         self.title("Braille Reader Menu")
-        ttk.Button(self, text="Book 1", command=self.open_chapter_page).pack(
-            expand=True
-        )
-        ttk.Button(self, text="Book 2", command=self.open_chapter_page).pack(
-            expand=True
-        )
+        self.documents = reader.get_all_documents()
+        self.book_choice = None
+        for i in range(len(self.documents)):
+            ttk.Button(
+                self, text=f"Book {i+1}", command=lambda i=i: self.open_chapter_page(i)
+            ).pack(expand=True)
 
-    def open_chapter_page(self):
+    def open_chapter_page(self, i):
+        self.book_choice = i + 1
         self.chapter = Chapter(self)
 
 
 class Chapter(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+        self.book_choice = parent.book_choice
         self.parent = parent
         self.geometry("1200x900")
         self.title("Braille Reader")
-        ttk.Button(self, text="Chapter 1", command=self.open_window).pack(expand=True)
-        ttk.Button(self, text="Chapter 2", command=self.open_window).pack(expand=True)
+        for i in range(self.book_choice):
+
+            ttk.Button(self, text=i, command=self.open_window).pack(expand=True)
 
         ttk.Button(self, text="Back to Main Menu", command=self.return_to_main).pack(
             pady=10
