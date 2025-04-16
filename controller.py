@@ -33,12 +33,8 @@ class Controller:
         return []
 
     def load_braille_file(self, path_to_braille_file):
-        with open(path_to_braille_file, "r+") as f:
-            data = json.load(f)
-            braille_file = Braille_file(
-                data["text"], data["braille"], path_to_braille_file
-            )
-            self.reader.add_document(braille_file)
+        braille_file = self.reader.load_braille_file(path_to_braille_file)
+        self.reader.add_document(braille_file)
 
     def save_braille_file(self, text, braille):
         data = {"text": text, "braille": braille}

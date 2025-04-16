@@ -10,7 +10,7 @@ controller = Controller(reader)
 
 def load_input(book, chapter):
     # Load the braille in the book we want to display
-    braille_input = reader.get_content(book, chapter)
+    braille_input = reader.get_chapter_content(book, chapter)
 
     empty_cell = "000000"
     merged_braille_input = []
@@ -97,8 +97,8 @@ class Content(tk.Toplevel):
         self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
         self.canvas.pack(pady=10)
 
-        self.merged_braille_input_wpages = load_input("book1", "chapter1")
-        self.update_canvas("book1", "chapter1")
+        self.merged_braille_input_wpages = load_input("book1", "Chapter 1")
+        self.update_canvas("book1", "Chapter 1")
 
         self.forward_btn = tk.Button(
             self,

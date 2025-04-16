@@ -4,11 +4,16 @@ import uuid
 
 class Braille_file:
 
-    def __init__(self, text, braille, file_path):
-        self.file_path = file_path
+    def __init__(self, name, chapters, text, braille, file_path):
+        self.name = name
+        self.chapters = chapters
         self.text = text
         self.braille = braille
+        self.file_path = file_path
         self.id = uuid.uuid4()
+
+    def get_chapters(self):
+        return self.chapters
 
     def get_braille(self):
         return self.braille
@@ -23,37 +28,48 @@ class Reader:
     def __init__(self, documents=None):
         self.documents = []
 
+    # -------------------------------
+    # Document management
+    # -------------------------------
     def add_document(self, document: Braille_file):
         self.documents.append(document)
 
     def remove_document(self, document: Braille_file):
         pass
 
-    # Load braille from a book
-    def get_braille_in_document(self, file_path):
-        for document in self.documents:
-            if document.file_path == file_path:
-                return document.get_braille()
-        return None
+    # Load the list of books on Menu
+    def get_all_documents(self):
+        return self.documents
 
     def load_braille_file(self, file_path):
         with open(file_path, "r") as f:
             data = json.load(f)
         return Braille_file(
-            text=data["text"], braille=data["braille"], file_path=file_path
+            name=data["name"],
+            chapters=data["chapters"],
+            text=data["text"],
+            braille=data["braille"],
+            file_path=file_path,
         )
 
-    # Load the list of books on menu
-    def get_all_documents(self):
-        return self.documents
+    # -------------------------------
+    # Data lookup in loaded documents
+    # -------------------------------
+    def get_chapters_and_braille(self, book):
+        """Given the book name, return its chapters (list) and braille (list)"""
+        path = f"documents/{book}.json"
+        file_content = self.load_braille_file(path)
+        self.add_document(file_content)
+        for document in self.documents:
+            if document.file_path == path:
+                return document.get_chapters(), document.get_braille()
+        return None
 
-    # Load braille content
-    def get_content(self, book, chapter="chapter1"):
-        path = f"documents/{book}/{chapter}.txt"
-        chapter_content = self.load_braille_file(path)
-        self.add_document(chapter_content)
-        braille_input = self.get_braille_in_document(chapter_content.file_path)
-        return braille_input
+    def get_chapter_content(self, book, chapter_name):
+        chapters, braille = self.get_chapters_and_braille(book)
+        for idx, chapter in enumerate(chapters):
+            if chapter == chapter_name:
+                return braille[idx]
 
     def get_book_nums(self):
         pass
