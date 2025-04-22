@@ -8,42 +8,6 @@ reader = Reader()
 controller = Controller(reader)
 
 
-def load_input(book, chapter):
-    # Load the braille in the book we want to display
-    braille_input = reader.get_chapter_content(book, chapter)
-
-    empty_cell = "000000"
-    merged_braille_input = []
-
-    if braille_input:
-        merged_row = []
-        for i, word_list in enumerate(braille_input):
-            merged_row.extend(word_list)
-            if i < len(braille_input) - 1:
-                merged_row.append(empty_cell)
-        merged_braille_input.append(merged_row)
-
-    flat_list = merged_braille_input[0]
-
-    total_cols = 15
-    rows_per_page = 10
-
-    rows = [flat_list[i : i + total_cols] for i in range(0, len(flat_list), total_cols)]
-    for row in rows:
-        while len(row) < total_cols:
-            row.append(empty_cell)
-
-    merged_braille_input_wpages = [
-        rows[i : i + rows_per_page] for i in range(0, len(rows), rows_per_page)
-    ]
-    for page in merged_braille_input_wpages:
-        while len(page) < rows_per_page:
-            page.append([empty_cell] * total_cols)
-
-    print("Total pages:", len(merged_braille_input_wpages))
-    return merged_braille_input_wpages
-
-
 class Menu(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -66,18 +30,26 @@ class Chapter(tk.Toplevel):
         super().__init__(parent)
         self.book_choice = parent.book_choice
         self.parent = parent
+        (self.chapter_list, self.content_list) = reader.get_chapters_and_braille(
+            f"book{self.book_choice}"
+        )
         self.geometry("1200x900")
         self.title("Braille Reader")
-        for i in range(self.book_choice):
 
-            ttk.Button(self, text=i, command=self.open_window).pack(expand=True)
+        for i in range(len(self.chapter_list)):
+            ttk.Button(
+                self,
+                text=f"Chapter {i+1}",
+                command=lambda i=i: self.open_content_page(i),
+            ).pack(expand=True)
 
         ttk.Button(self, text="Back to Main Menu", command=self.return_to_main).pack(
             pady=10
         )
 
-    def open_window(self):
-        Content(self).grab_set()
+    def open_content_page(self, i):
+        self.chapter_choice = i + 1
+        self.chapter = Content(self)
 
     def return_to_main(self):
         self.destroy()
@@ -87,6 +59,9 @@ class Chapter(tk.Toplevel):
 class Content(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+        self.book_choice = parent.book_choice
+        self.chapter_choice = parent.chapter_choice
+        self.parent = parent
         self.geometry("1200x950")
         self.title("Content Display")
 
@@ -97,8 +72,10 @@ class Content(tk.Toplevel):
         self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
         self.canvas.pack(pady=10)
 
-        self.merged_braille_input_wpages = load_input("book1", "Chapter 1")
-        self.update_canvas("book1", "Chapter 1")
+        self.merged_braille_input_wpages = reader.load_input(
+            f"book{self.book_choice}", f"Chapter {self.chapter_choice}"
+        )
+        self.update_canvas(f"book{self.book_choice}", f"Chapter {self.chapter_choice}")
 
         self.forward_btn = tk.Button(
             self,
@@ -158,7 +135,7 @@ class Content(tk.Toplevel):
                         )
 
     def update_canvas(self, book, chapter):
-        merged_braille_input_wpages = load_input(book, chapter)
+        merged_braille_input_wpages = reader.load_input(book, chapter)
         page_content = controller.go_to_page(
             controller.page_index, merged_braille_input_wpages
         )
