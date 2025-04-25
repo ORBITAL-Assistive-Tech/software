@@ -1,10 +1,10 @@
 import json
-from model import BrailleFile, Reader
+import louis
+
+from model import BrailleFile
 import utils.docx as docs
 import utils.brf as brf
-
 import pybrl as brl
-import louis
 
 
 class Controller:

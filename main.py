@@ -1,8 +1,9 @@
+import os
+import warnings
+
 from view import View
 from controller import Controller
 from model import Reader
-import os
-import warnings
 
 
 def main():
