@@ -9,9 +9,20 @@ controller = Controller(reader)
 
 
 class Menu(tk.Tk):
+    """
+    Main window for the Braille Reader.
+
+    Displays buttons for all available Braille documents loaded into the system.
+    Each button opens a new window showing the chapters of the corresponding book.
+
+    Attributes:
+        documents (list): A list of Braille_file instances available for reading.
+        book_choice (int): The index of the selected book.
+    """
+
     def __init__(self):
         super().__init__()
-        self.geometry("1200x900")
+        self.geometry("1600x900")
         self.title("Braille Reader Menu")
         self.documents = reader.get_all_documents()
         self.book_choice = None
@@ -26,6 +37,18 @@ class Menu(tk.Tk):
 
 
 class Chapter(tk.Toplevel):
+    """
+    Chapter selection window for a chosen book.
+
+    Shows all available chapters in the selected book and allows users to select one
+    to view its braille content. Also has a button to return to the main menu.
+
+    Attributes:
+        book_choice (int): Index of the selected book.
+        chapter_list (list): List of chapter names in the book.
+        content_list (list): List of Braille content corresponding to each chapter.
+    """
+
     def __init__(self, parent):
         super().__init__(parent)
         self.book_choice = parent.book_choice
@@ -33,7 +56,7 @@ class Chapter(tk.Toplevel):
         (self.chapter_list, self.content_list) = reader.get_chapters_and_braille(
             f"book{self.book_choice}"
         )
-        self.geometry("1200x900")
+        self.geometry("1600x900")
         self.title("Braille Reader")
 
         for i in range(len(self.chapter_list)):
@@ -57,19 +80,23 @@ class Chapter(tk.Toplevel):
 
 
 class Content(tk.Toplevel):
+    """
+    Content display window for a specific chapter of a book.
+    """
+
     def __init__(self, parent):
         super().__init__(parent)
         self.book_choice = parent.book_choice
         self.chapter_choice = parent.chapter_choice
         self.parent = parent
-        self.geometry("1200x950")
+        self.geometry("1600x900")
         self.title("Content Display")
 
-        self.dot_size = 10
-        self.spacing = 20
-        self.row_spacing = 80
+        self.dot_size = 6
+        self.spacing = 8
+        self.row_spacing = 40
 
-        self.canvas = tk.Canvas(self, width=1000, height=800, bg="white")
+        self.canvas = tk.Canvas(self, width=1500, height=650, bg="white")
         self.canvas.pack(pady=10)
 
         self.merged_braille_input_wpages = reader.load_input(
@@ -96,29 +123,18 @@ class Content(tk.Toplevel):
         )
         self.close_btn.pack(side="bottom", pady=5)
 
-        label = tk.Label(self, text="go to page:", font=(24))
-        label.pack()
-        self.entry = tk.Entry(self, width=6)
-        self.entry.pack()
+    def draw_braille(self, page_content):
+        """
+        Draws the Braille cells (6 dots each cell) representing the braille content.
 
-        self.go_to_page_btn = ttk.Button(
-            self,
-            text="Confirm",
-            command=self.go_to_page,
-        )
-        self.go_to_page_btn.pack()
-
-    def go_to_page(self, merged_braille_input_wpages):
-        target_page = int(self.entry.get())
-        page_content = controller.go_to_page(target_page, merged_braille_input_wpages)
-        if page_content:
-            self.draw_braille(page_content)
-
-    def draw_braille(self, braille_grid):
+        Args:
+            page_content (list of lists): the content to be displayed on the given page.
+            Each inner list represents a row of Braille cells.
+        """
         self.canvas.delete("all")
         x_offset = 20
         y_offset = 20
-        for row_idx, braille_row in enumerate(braille_grid):
+        for row_idx, braille_row in enumerate(page_content):
             for char_idx, braille in enumerate(braille_row):
                 for i, bit in enumerate(braille):
                     col = i % 2
@@ -135,6 +151,13 @@ class Content(tk.Toplevel):
                         )
 
     def update_canvas(self, book, chapter):
+        """
+        Updates the canvas with the new Braille content for the selected book and chapter.
+
+        Args:
+            book (str): The name of the selected book.
+            chapter (str): The name of the selected chapter.
+        """
         merged_braille_input_wpages = reader.load_input(book, chapter)
         page_content = controller.go_to_page(
             controller.page_index, merged_braille_input_wpages
@@ -143,11 +166,23 @@ class Content(tk.Toplevel):
             self.draw_braille(page_content)
 
     def next_page(self, merged_braille_input_wpages):
+        """
+        Displays the next page of Braille content in the document.
+
+        Args:
+            merged_braille_input_wpages (list): A list of pages containing all braille content.
+        """
         page_content = controller.next_page(merged_braille_input_wpages)
         if page_content:
             self.draw_braille(page_content)
 
     def prev_page(self, merged_braille_input_wpages):
+        """
+        Displays the previous page of Braille content in the document.
+
+        Args:
+            merged_braille_input_wpages (list): A list of pages containing all braille content.
+        """
         page_content = controller.prev_page(merged_braille_input_wpages)
         if page_content:
             self.draw_braille(page_content)

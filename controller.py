@@ -33,10 +33,24 @@ class Controller:
         return []
 
     def load_braille_file(self, path_to_braille_file):
+        """
+        Load a Braille file from a given path and add it to the list of documents in Reader.
+
+        Args:
+            path_to_braille_file (str): Path to a JSON Braille file.
+        """
         braille_file = self.reader.load_braille_file(path_to_braille_file)
         self.reader.add_document(braille_file)
 
     def save_braille_file(self, text, braille):
+        """
+        Save the given text and Braille data to a new JSON file.
+
+        Args:
+            text (str): The original text.
+            braille (list of str): The braille representation of the text.
+            Each string is a 6-digit sequence of '0's and '1's representing a braille cell.
+        """
         data = {"text": text, "braille": braille}
         with open(
             f"documents/book{len(self.reader.get_all_documents())+1}.json", "w"
@@ -44,6 +58,17 @@ class Controller:
             json.dump(data, f, ensure_ascii=False)
 
     def go_to_page(self, target_page, braille_pages):
+        """
+        Navigate to a specific page in the Braille document.
+
+        Args:
+            target_page (int): Index of the target page.
+            braille_pages (list): List of braille content in all pages.
+
+        Returns:
+            list of lists or None: If valid, list of the content to be displayed on the given page.
+            Each inner list represents a group of Braille cells to be displayed on one line.
+        """
         if 0 <= target_page < len(braille_pages):
             self.page_index = target_page
             return braille_pages[self.page_index]
@@ -52,6 +77,16 @@ class Controller:
             return None
 
     def next_page(self, braille_pages):
+        """
+        Move to the next page, if possible.
+
+        Args:
+            braille_pages (list): List of braille content in all pages.
+
+        Returns:
+            list of lists: if available, the content to be displayed on the next page.
+            None: if already at the last page
+        """
         if self.page_index < len(braille_pages) - 1:
             self.page_index += 1
             return braille_pages[self.page_index]
@@ -60,6 +95,16 @@ class Controller:
             return None
 
     def prev_page(self, braille_pages):
+        """
+        Move to the previous page, if possible.
+
+        Args:
+            braille_pages (list): List of braille content in all pages.
+
+        Returns:
+            list of lists: if available, the content to be displayed on the previous page.
+            None: if already at the last page
+        """
         if self.page_index > 0:
             self.page_index -= 1
             return braille_pages[self.page_index]
@@ -68,11 +113,23 @@ class Controller:
             return None
 
     def docx_to_braille(self, filepath):
+        """
+        Convert a .docx file to text, then to braille, and save the result.
+
+        Args:
+            filepath (str): Path to the .docx file to be converted.
+        """
         text = docs.docx_to_txt(filepath)
         braille = self.text_to_braille(text)
         self.save_braille_file(text, braille)
 
     def brf_to_braille(self, filepath):
+        """
+        Read a .brf Braille file, extract its content, and save the text and braille representation.
+
+        Args:
+            filepath (str): Path to the .brf file.
+        """
         data = brf.brf_to_binary(filepath)
         text = data[0]
         braille = data[1]
