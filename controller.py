@@ -3,14 +3,8 @@ from model import BrailleFile, Reader
 import utils.docx as docs
 import utils.brf as brf
 
-import sys
-
-sys.path.append("/home/koroko/Workspace/pybrl")
-
 import pybrl as brl
 import louis
-
-# /home/koroko/Workspace/pybrl
 
 
 class Controller:
