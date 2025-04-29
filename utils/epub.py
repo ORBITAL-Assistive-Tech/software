@@ -1,6 +1,8 @@
 import os
 import argparse
-from docx import Document
+from bs4 import BeautifulSoup
+import ebooklib
+from ebooklib import epub
 
 
 def validate_file_path(path, extension=None):
@@ -12,11 +14,11 @@ def validate_file_path(path, extension=None):
     return path
 
 
-def docx_to_txt(input_path, output_path=None):
+def epub_to_txt(input_path, output_path=None):
     """
-    Convert DOCX file to TXT
+    Convert EPUB file to TXT
     Args:
-        input_path (str): Path to input DOCX file
+        input_path (str): Path to input EPUB file
         output_path (str): Optional output TXT path
     Returns:
         str: Path to created TXT file
@@ -25,29 +27,43 @@ def docx_to_txt(input_path, output_path=None):
     """
     try:
         # Validate input
-        input_path = validate_file_path(input_path, ".docx")
+        input_path = validate_file_path(input_path, ".epub")
 
         # Set default output filename
         if output_path is None:
             output_path = os.path.splitext(input_path)[0] + ".txt"
 
-        # Read DOCX content
-        doc = Document(input_path)
+        # Read EPUB content
+        book = epub.read_epub(input_path)
         full_text = []
 
-        # Process paragraphs
-        paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
-        full_text.extend(paragraphs)
+        # Process all items in the EPUB
+        for item in book.get_items():
+            if item.get_type() == ebooklib.ITEM_DOCUMENT:
+                soup = BeautifulSoup(item.get_content(), "html.parser")
 
-        for table in doc.tables:
-            for row in table.rows:
-                row_text = []
-                for cell in row.cells:
-                    row_text.append(cell.text.strip())
-                full_text.append("\t".join(row_text))  # Tab-separated columns
-            full_text.append("")  # Add empty line after each table
+                # Add chapter titles
+                for header in soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"]):
+                    full_text.append(f"\n\n{header.get_text().strip()}\n")
 
-        # Combine everything together
+                # Add in paragraphs
+                for paragraph in soup.find_all("p"):
+                    text = paragraph.get_text().strip()
+                    if text:  # Only add non-empty paragraphs
+                        full_text.append(text)
+
+                # Add line breaks between sections
+                full_text.append("\n")
+
+        # Combine all content with proper spacing
+        full_text = "\n".join(full_text)
+
+        # Clean up excessive newlines
+        import re
+
+        full_text = re.sub(r"\n{3,}", "\n\n", full_text).strip()
+
+        # Write to output file
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(full_text)
 
@@ -59,12 +75,12 @@ def docx_to_txt(input_path, output_path=None):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert DOCX files to plain text",
+        description="Convert EPUB files to plain text",
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
         "input_file",
-        help="Path to the input DOCX file\nExample: C:/files/orbital_example.docx",
+        help="Path to the input EPUB file\nExample: C:/files/book.epub",
     )
     parser.add_argument(
         "-o",
@@ -75,7 +91,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        output_path = docx_to_txt(args.input_file, args.output)
+        output_path = epub_to_txt(args.input_file, args.output)
         print(
             f"Successfully converted:\nInput:  {args.input_file}\nOutput: {output_path}"
         )
@@ -84,7 +100,7 @@ def main():
         print("\nUsage tips:")
         print("- Use forward slashes (/) in paths for cross-platform compatibility")
         print("- Enclose paths in quotes if they contain spaces")
-        print("- Example: python docx_to_txt.py 'C:/my docs/file.docx' -o output.txt")
+        print("- Example: python epub_to_txt.py 'C:/my books/book.epub' -o output.txt")
 
 
 if __name__ == "__main__":
